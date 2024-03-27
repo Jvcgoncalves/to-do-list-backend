@@ -2,11 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 
-const Users = require("../models/users_model")
+const Users = require("../models/users_model");
+const validadeUserCredentials = require("./scripts_routes/validateUserCredentials");
 
 router.get("/", async (req,res)=>{
+  const { user_password,user_email } = req.body
+
   try {
-    let users = await Users.find({})
+    let users = await validadeUserCredentials({password: user_password, email: user_email})
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json(error.message)
@@ -24,29 +27,29 @@ router.post("/", async (req,res) =>{
   }
 })
 
-router.get("/:id",async (req,res)=>{
-  const { id } = req.params
+router.get("/:userId",async (req,res)=>{
+  const { userId } = req.params
   try {
-    let users = await Users.findById(id)
+    let users = await Users.findById(userId)
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json(error.message)
   }
 })
 
-router.put("/:id",async (req,res)=>{
+router.put("/:userId",async (req,res)=>{
   const { name } = req.body
   try {
-    let users = await Users.findByIdAndUpdate(req.params.id,{name},{new:true}) // {new:true} optional to get updated doc
+    let users = await Users.findByIdAndUpdate(req.params.userId,{name},{new:true}) // {new:true} optional to get updated doc
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json(error.message)
   }
 })
 
-router.delete("/:id",async (req,res)=>{
+router.delete("/:userId",async (req,res)=>{
   try {
-    let users = await Users.findByIdAndDelete(req.params.id)
+    let users = await Users.findByIdAndDelete(req.params.userId)
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json(error.message)
