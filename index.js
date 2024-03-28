@@ -7,14 +7,14 @@ const tasksRouter = require("./src/routes/users")
 require("./config/database")
 
 const app = express()
-const port = 3000 || process.env.PORT
+const port = 3000 || process.env.API_PORT
 
 app.use(express.json())
 app.use(cors())
 app.use(express.static(path.join(__dirname,"public")))
 
 app.use("/users", usersRouter)
-app.use("/users/:userId/tasks", tasksRouter)
+app.use("/:userId/tasks", tasksRouter)
 
 app.listen(port, () =>{
   console.log("Servidor foi iniciado");
