@@ -5,8 +5,8 @@ const usersSchema = mongoose.Schema({
   email: {type: String, required: true},
   password: {type: String, required: true},
   tasks: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "task"
+    taskId:{ type: mongoose.Schema.Types.ObjectId, ref: "task", required: true},
+    taskName: {type: String, required: true}
   }]
 })
 

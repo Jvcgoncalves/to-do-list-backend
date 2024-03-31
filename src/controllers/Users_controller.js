@@ -31,7 +31,7 @@ class UsersController{
         return "email already registered"
       }
 
-      Users.creatae({ user_name, email, password })
+      Users.create({ user_name, email, password })
       return "user registed"
 
     } catch (error) {
@@ -89,6 +89,11 @@ class UsersController{
     } catch (error) {
       return error.message
     }
+  }
+
+  static async assignNewTaskToUser({userId,newTask}){
+    const { name, _id} = newTask
+    await Users.findByIdAndUpdate(userId,{$push: {tasks:{ taskId: _id,taskName: name}}})
   }
 }
 

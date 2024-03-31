@@ -17,8 +17,8 @@ router.get("/", async (req,res)=>{
 
 router.post("/", async (req,res) =>{
   try {
-    let users = await UsersController.createNewUser({data: req.body})
-    res.status(200).json(users);
+    let response = await UsersController.createNewUser({data: req.body})
+    res.status(200).json(response);
   } catch (error) {
     res.status(422).json(error.message)
   }
@@ -37,7 +37,6 @@ router.get("/:userId",async (req,res)=>{
 
     res.status(200).json(user_data);
   } catch (error) {
-    console.log(error.message);
     res.status(500).json(error.message)
   }
 })
@@ -62,7 +61,6 @@ router.delete("/:userId",async (req,res)=>{
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json(error.message)
-    console.log(error);
   }
 })
 
