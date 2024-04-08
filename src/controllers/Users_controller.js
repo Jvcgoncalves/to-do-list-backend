@@ -1,13 +1,14 @@
 const Users = require("../models/users_model")
 const emailExist = require("./scripts/checkEmailExist")
+const checkError = require("./scripts/checkError")
 
 class UsersController{
 
 
   static async validadeUserCredentials({email,password }) {
     try {
-      const user = await Users.find({$and : [{password, email}]})
-      if (user.length === 0) {
+      const user = await Users.findOne({$and : [{password, email}]})
+      if (!user) {
     
         if(await emailExist({email})){
           return "incorrect password"
@@ -19,7 +20,7 @@ class UsersController{
         return user
       }
     } catch (error) {
-      return error.message
+      return checkError({error})
     }
   }
 
@@ -35,7 +36,7 @@ class UsersController{
       return "user registed"
 
     } catch (error) {
-      return error.message
+      return checkError({error})
     }
   }
 
@@ -45,10 +46,7 @@ class UsersController{
       if(user_data === null) return "user not found"
       return user_data
     } catch (error) {
-      if(error.message.includes("Cast to ObjectId failed for value")){
-        return "user id invalid"
-      }
-      return error.message
+      return checkError({error})
     }
   }
 
@@ -64,36 +62,52 @@ class UsersController{
 
       return "user data updated"
     } catch (error) {
-      console.log(error.message);
-      return error
+      return checkError({error})
     }
   }
 
   static async deleteUser({userId, password}){
-    console.log(userId);
-    console.log(password);
     try {
       const user_data = await this.getLoggedUserData( {userId} )
-      console.log(user_data);
       if(user_data === "user not found"){
         return user_data
       }
-      if(user_data === "user id invalid"){
-        return "user id invalid"
+      if(user_data === "user/task id invalid"){
+        return "user/task id invalid"
       }
       if(user_data.password !== password){
-        return "user not allowed"
+        return "wrong password"
       }
       await Users.findByIdAndDelete(userId)
       return "user deleted"
     } catch (error) {
-      return error.message
+      return checkError({error})
     }
   }
 
   static async assignNewTaskToUser({userId,newTask}){
-    const { name, _id} = newTask
-    await Users.findByIdAndUpdate(userId,{$push: {tasks:{ taskId: _id,taskName: name}}})
+    try {
+      const { name, _id} = newTask
+      await Users.findByIdAndUpdate(userId,{$push: {"tasks":{ "taskId": _id,"taskName": name}}})
+    } catch (error) {
+      return {code:500, message: "error assigning tasks to array from current user"}
+    }
+  }
+
+  static async updateTaskName({taskName,taskId,userId}){
+    try {
+      return await Users.updateOne({_id:userId,"tasks.taskId":taskId},{$set:{"tasks.$.taskName":taskName}})
+    } catch (error) {
+      return {code:500,message: "error updating tasks array from current user"}
+    }
+  }
+
+  static async deleteTaskFromArray({taskId,userId}){
+    try {
+      await Users.findByIdAndUpdate(userId,{$pull: {"tasks":{ "taskId": taskId}}},{new:true})
+    } catch (error) {
+      return {code:500, message: "error on delete tasks array from current user"}
+    }
   }
 }
 

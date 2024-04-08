@@ -6,9 +6,9 @@ const Users = require("../models/users_model");
 const UsersController = require("../controllers/Users_controller");
 Users
 router.get("/", async (req,res)=>{
-  const { user_password,user_email } = req.body
+  const { email,password } = req.query
   try {
-    let users = await UsersController.validadeUserCredentials({password: user_password, email: user_email})
+    let users = await UsersController.validadeUserCredentials({password, email})
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json(error.message)
