@@ -11,9 +11,9 @@ class UsersController{
       if (!user) {
     
         if(await emailExist({email})){
-          return "incorrect password"
+          return "Senha incorreta"
         } else {
-          return "unregistered email"
+          return "Email não registrado"
         }
         
       } else{
@@ -26,16 +26,17 @@ class UsersController{
 
   static async createNewUser({data}){
     try {
-      const { user_name, email, password } = data
+      const { userName, email, password } = data
 
       if(await emailExist({email})){
         return "email already registered"
       }
 
-      Users.create({ user_name, email, password })
+      Users.create({ user_name: userName, email, password })
       return "user registed"
 
     } catch (error) {
+      console.log(error);
       return checkError({error})
     }
   }

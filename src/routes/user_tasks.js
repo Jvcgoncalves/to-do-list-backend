@@ -6,7 +6,7 @@ const TasksController = require("../controllers/Tasks_controller");
 
 router.get("/:userId", async (req,res) => {
   const { userId } = req.params
-  const { specific_search, filter } = req.body
+  const { specific_search, filter } = req.query
 
   try{
     const response = await TasksController.getTasks({searchFor: specific_search, userId, filter})
