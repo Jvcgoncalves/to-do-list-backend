@@ -4,21 +4,10 @@ const checkError = require("./scripts/checkError");
 
 class TasksController{
 
-  static async getTasks({searchFor, userId, filter}){
+  static async getTasks({userId}){
     try {
-      if(filter !== undefined){
-        const {done} = filter
-        const allUserTasks = await Tasks.find({$and: [{ userId }, { done }]})
-        const namesMatched = allUserTasks.filter(currentTask => currentTask.name.toLowerCase().match(searchFor.toLowerCase()))
-        return namesMatched.length === 0 ? "task not found" : namesMatched
-      } else if (!searchFor){
-        const allUserTasks = await Tasks.find({userId})
-        return allUserTasks.length === 0 ? "task not found" : allUserTasks
-      } else {
-        const allUserTasks = await Tasks.find({userId})
-        const tasksFiltered = allUserTasks.filter(currentTask => currentTask.name.toLowerCase().match(searchFor.toLowerCase()))
-        return  tasksFiltered.length === 0 ? "task not found" : tasksFiltered
-      }
+      const allUserTasks = await Tasks.find({userId})
+      return allUserTasks
     } catch (error) {
       return checkError({error})
     }
@@ -35,9 +24,9 @@ class TasksController{
   }
 
   static async createNewTask({data,userId}){
-    const { name, description, delivery_date } = data
+    const { name, description, delivery_date, register_date } = data
     try{
-      const new_task = await Tasks.create({name, done: false, description, delivery_date,userId})
+      const new_task = await Tasks.create({name, done: false, description, delivery_date, userId, register_date})
       
       UsersController.assignNewTaskToUser({userId, newTask: new_task})
     
