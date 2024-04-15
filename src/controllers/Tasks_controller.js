@@ -1,6 +1,7 @@
 const Tasks = require("../models/user_task_model");
 const UsersController = require("./Users_controller");
 const checkError = require("./scripts/checkError");
+const getRegisterDate = require("./scripts/getRegisterDate");
 
 class TasksController{
 
@@ -16,7 +17,8 @@ class TasksController{
 
   static async seeSingleTask({userId,taskId}){
     try {
-      const response = await Tasks.find({$and: [{userId,_id:taskId}]})
+      const response = await Tasks.findOne({$and: [{userId,_id:taskId}]})
+      console.log(response);
       return response.length === 0 ? "task not found" : response
     } catch (error) {
       return checkError({error})
@@ -24,7 +26,9 @@ class TasksController{
   }
 
   static async createNewTask({data,userId}){
-    const { name, description, delivery_date, register_date } = data
+    const { name, description, delivery_date } = data
+    const register_date = getRegisterDate()
+
     try{
       const new_task = await Tasks.create({name, done: false, description, delivery_date, userId, register_date})
       
