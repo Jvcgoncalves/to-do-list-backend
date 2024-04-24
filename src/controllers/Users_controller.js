@@ -59,8 +59,9 @@ class UsersController{
         return "user not allowed"
       }
 
-      await Users.findByIdAndUpdate(userId,{...new_data}, {new:true})
-
+      const userNewData = await Users.findByIdAndUpdate(userId,{...new_data}, {new:true})
+      console.log(userOldData);
+      console.log(userNewData);
       return "user data updated"
     } catch (error) {
       return checkError({error})
@@ -105,7 +106,7 @@ class UsersController{
 
   static async deleteTaskFromArray({taskId,userId}){
     try {
-      await Users.findByIdAndUpdate(userId,{$pull: {"tasks":{ "taskId": taskId}}},{new:true})
+      return await Users.findByIdAndUpdate(userId,{$pull: {"tasks":{ "taskId": taskId}}},{new:true})
     } catch (error) {
       return {code:500, message: "error on delete tasks array from current user"}
     }

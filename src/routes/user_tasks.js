@@ -37,7 +37,7 @@ router.post("/:userId", async (req,res) => {
 })
 
 router.put("/:userId/:taskId", async (req,res) => {
-  const { userId,taskId } = req.params
+  const { userId, taskId } = req.params
   const { data } = req.body
   try {
     const response = await TasksController.editTask({data,userId,taskId})
@@ -56,4 +56,5 @@ router.delete("/:userId/:taskId", async (req,res) => {
     res.status(500).json(error.message)
   }
 })
+
 module.exports = router

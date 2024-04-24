@@ -4,7 +4,7 @@ const router = express.Router();
 
 const Users = require("../models/users_model");
 const UsersController = require("../controllers/Users_controller");
-Users
+
 router.get("/", async (req,res)=>{
   const { email,password } = req.query
   try {

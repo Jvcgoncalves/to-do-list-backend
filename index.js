@@ -7,7 +7,7 @@ const tasksRouter = require("./src/routes/user_tasks")
 require("./config/database")
 
 const app = express()
-const port = process.env.API_PORT || 3000
+const port = process.env.BACKEND_PORT || 3000
 
 app.use(express.json())
 app.use(cors())

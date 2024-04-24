@@ -18,8 +18,7 @@ class TasksController{
   static async seeSingleTask({userId,taskId}){
     try {
       const response = await Tasks.findOne({$and: [{userId,_id:taskId}]})
-      console.log(response);
-      return response.length === 0 ? "task not found" : response
+      return response === null ? "task not found" : response
     } catch (error) {
       return checkError({error})
     }
@@ -42,15 +41,13 @@ class TasksController{
 
   static async editTask({data,userId,taskId}){
     try {
-      console.log(data?.name);
       const response = await Tasks.findOneAndUpdate({$and:[{userId,_id:taskId}]},{...data},{new:true})
-
       if(data?.name !== undefined){
         const taskName = data.name
         await UsersController.updateTaskName({taskName,taskId,userId})
       }
 
-      return response
+      return response === null ? "can't edit task" : "task edited"
     } catch (error) {
       return checkError({error})
     }
@@ -58,9 +55,13 @@ class TasksController{
 
   static async deleteTask({userId,taskId}){
     try {
-      await Tasks.findByIdAndDelete(taskId)
-      await UsersController.deleteTaskFromArray({taskId,userId})
-      return "task deleted"
+
+      const responseFromTasks = await Tasks.findOneAndDelete({$and:[{userId,_id:taskId}]})
+      if(!responseFromTasks){
+        return "task not found"
+      }
+      const responseFromUsersArrayDelete = await UsersController.deleteTaskFromArray({taskId,userId})
+      return responseFromTasks && responseFromUsersArrayDelete ? "task deleted" : "error on delete"
     } catch (error) {
       return checkError({error})
     }
