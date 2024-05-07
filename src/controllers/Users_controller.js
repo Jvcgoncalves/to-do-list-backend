@@ -1,4 +1,6 @@
 const Users = require("../models/users_model")
+const CommonService = require("../services/CommonService")
+const TasksController = require("./Tasks_controller")
 const emailExist = require("./scripts/checkEmailExist")
 const checkError = require("./scripts/checkError")
 
@@ -36,7 +38,6 @@ class UsersController{
       return "user registed"
 
     } catch (error) {
-      console.log(error);
       return checkError({error})
     }
   }
@@ -54,14 +55,16 @@ class UsersController{
   static async updateUserData({new_data, password, userId}){
     try {
       const userOldData = await this.getLoggedUserData( {userId} )
-
+      const formatedNewData = {
+        user_name: new_data.userNameInput,
+        email: new_data.userEmailInput,
+        password: new_data.userPasswordInput,
+      }
       if(userOldData.password !== password){
         return "user not allowed"
       }
 
-      const userNewData = await Users.findByIdAndUpdate(userId,{...new_data}, {new:true})
-      console.log(userOldData);
-      console.log(userNewData);
+      const userNewData = await Users.findByIdAndUpdate(userId,{...formatedNewData}, {new:true})
       return "user data updated"
     } catch (error) {
       return checkError({error})
@@ -81,6 +84,7 @@ class UsersController{
         return "wrong password"
       }
       await Users.findByIdAndDelete(userId)
+      await CommonService.deleteAllTasks({userId})
       return "user deleted"
     } catch (error) {
       return checkError({error})
@@ -100,7 +104,7 @@ class UsersController{
     try {
       return await Users.updateOne({_id:userId,"tasks.taskId":taskId},{$set:{"tasks.$.taskName":taskName}})
     } catch (error) {
-      return {code:500,message: "error updating tasks array from current user"}
+      return {code:500, message: "error updating tasks array from current user"}
     }
   }
 

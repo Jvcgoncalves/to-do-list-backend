@@ -1,11 +1,13 @@
-function getRegisterDate(){
-  const currentDate = Date.now()
-  let dateFormat = new Date(currentDate)
-  const year = dateFormat.getFullYear().toString();
-  const month = (dateFormat.getMonth()+ 1).toString();
-  const day = dateFormat.getDate().toString();
+function getRegisterDate(dateToTransform = null){
+  return dateToTransform === null ? new Date(Date.now()) : new Date(formatDateToISO(dateToTransform))
+}
 
-  return `${day.length === 1 ? `0${day}` : day}/${month.length === 1 ? `0${month}` : month}/${year}`
+function formatDateToISO(dateString) {
+  let dateComponents = dateString.split('/');
+  let day = parseInt(dateComponents[0]);
+  let month = parseInt(dateComponents[1]);
+  let year = parseInt(dateComponents[2]);
+  return `${year}/${month}/${day}`
 }
 
 module.exports = getRegisterDate

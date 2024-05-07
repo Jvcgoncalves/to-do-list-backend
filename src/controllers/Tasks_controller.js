@@ -1,5 +1,5 @@
 const Tasks = require("../models/user_task_model");
-const UsersController = require("./Users_controller");
+const CommonService = require("../services/CommonService");
 const checkError = require("./scripts/checkError");
 const getRegisterDate = require("./scripts/getRegisterDate");
 
@@ -26,13 +26,15 @@ class TasksController{
 
   static async createNewTask({data,userId}){
     const { name, description, delivery_date } = data
+
     const register_date = getRegisterDate()
+    const delivery_date_in_date_format = getRegisterDate(delivery_date)
 
     try{
-      const new_task = await Tasks.create({name, done: false, description, delivery_date, userId, register_date})
+      const new_task = await Tasks.create({name, done: false, description, delivery_date: delivery_date_in_date_format, userId, register_date})
       
-      UsersController.assignNewTaskToUser({userId, newTask: new_task})
-    
+      CommonService.assignNewTaskToUser({userId, newTask: new_task})
+
       return "task registered"
     } catch(error){
       return checkError({error})
@@ -40,13 +42,16 @@ class TasksController{
   } 
 
   static async editTask({data,userId,taskId}){
+
+    data.delivery_date = getRegisterDate(data?.delivery_date); // need to format as data to mongodb accepts
+
     try {
       const response = await Tasks.findOneAndUpdate({$and:[{userId,_id:taskId}]},{...data},{new:true})
       if(data?.name !== undefined){
         const taskName = data.name
-        await UsersController.updateTaskName({taskName,taskId,userId})
+        await CommonService.updateTaskName({taskName,taskId,userId})
       }
-
+      console.log(response);
       return response === null ? "can't edit task" : "task edited"
     } catch (error) {
       return checkError({error})
@@ -60,7 +65,7 @@ class TasksController{
       if(!responseFromTasks){
         return "task not found"
       }
-      const responseFromUsersArrayDelete = await UsersController.deleteTaskFromArray({taskId,userId})
+      const responseFromUsersArrayDelete = await CommonService.deleteTaskFromArray({taskId,userId})
       return responseFromTasks && responseFromUsersArrayDelete ? "task deleted" : "error on delete"
     } catch (error) {
       return checkError({error})

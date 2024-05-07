@@ -4,8 +4,8 @@ const taskSchema = mongoose.Schema({
   name: {type: String, required: true},
   done: {type: Boolean, default: false, required: false},
   description: {type: String, required: false},
-  delivery_date: {type: String, required: true},
-  register_date: {type: String, required: true},
+  delivery_date: {type: Date, required: true},
+  register_date: {type: Date, required: true},
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref:"users",

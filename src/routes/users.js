@@ -2,7 +2,6 @@ const express = require("express");
 
 const router = express.Router();
 
-const Users = require("../models/users_model");
 const UsersController = require("../controllers/Users_controller");
 
 router.get("/", async (req,res)=>{
@@ -31,7 +30,7 @@ router.get("/:userId",async (req,res)=>{
     let user_data = await UsersController.getLoggedUserData({userId})
 
     if(user_data === "user not found") {
-      res.status(404).json({error_message: "user not found"})
+      res.status(404).json("user not found")
       return
     }
 
@@ -44,7 +43,6 @@ router.get("/:userId",async (req,res)=>{
 router.put("/:userId",async (req,res)=>{
   const { new_data, password } = req.body
   const { userId } = req.params
-
   try {
     let response = await UsersController.updateUserData({new_data, password, userId})
     res.status(200).json(response);
