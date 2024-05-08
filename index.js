@@ -15,6 +15,9 @@ app.use(express.static(path.join(__dirname,"public")))
 
 app.use("/users", usersRouter)
 app.use("/tasks", tasksRouter)
+app.use("/", (req,res)=>{
+  res.json("Tudo certo")
+})
 
 app.listen(port, () =>{
   console.log(`Servidor foi iniciado na porta http://localhost:${3000} `);
