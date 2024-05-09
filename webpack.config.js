@@ -4,7 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   entry: './index.js', // Seu ponto de entrada principal do lado do servidor
   output: {
-    filename: 'server.min.js', // O nome do arquivo de saída minificado
+    filename: 'index.min.js', // O nome do arquivo de saída minificado
     path: path.resolve(__dirname, 'dist'), // O diretório de saída para os arquivos
   },
   mode: "production",
@@ -21,4 +21,13 @@ module.exports = {
       }),
     ],
   },
+  module: {
+    rules: [
+      // Other rules...
+      {
+        test: /\.node$/,
+        loader: 'node-loader'
+      }
+    ]
+  }
 };

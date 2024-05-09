@@ -20,5 +20,5 @@ app.use("/", (req,res)=>{
 })
 
 app.listen(port, () =>{
-  console.log(`Servidor foi iniciado na porta http://localhost:${3000} `);
+  console.log(`Servidor foi iniciado na porta ${port || 'http://localhost:3000'} `);
 })
