@@ -52,6 +52,24 @@ class UsersController{
     }
   }
 
+  static async changePassword({userEmail, newPassword}){
+    try {
+      const user = await Users.findOne({ email: userEmail })
+      if(!user){
+        return "user not found"
+      }
+      const newPasswordData ={
+        password: newPassword
+      }
+
+      const userNewData = await Users.findByIdAndUpdate(user._id,{...newPasswordData}, {new:true})
+      console.log("userNewData" + userNewData);
+      return "user password updated"
+    } catch (error) {
+      return checkError({error})
+    }
+  }
+
   static async updateUserData({new_data, password, userId}){
     try {
       const userOldData = await this.getLoggedUserData( {userId} )

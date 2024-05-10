@@ -40,6 +40,16 @@ router.get("/:userId",async (req,res)=>{
   }
 })
 
+router.put("/", async (req, res) =>{
+  const { userEmail, newPassword } = req.body
+  try {
+    let response = await UsersController.changePassword({ newPassword, userEmail })
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
+})
+
 router.put("/:userId",async (req,res)=>{
   const { new_data, password } = req.body
   const { userId } = req.params

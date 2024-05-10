@@ -51,7 +51,6 @@ class TasksController{
         const taskName = data.name
         await CommonService.updateTaskName({taskName,taskId,userId})
       }
-      console.log(response);
       return response === null ? "can't edit task" : "task edited"
     } catch (error) {
       return checkError({error})
